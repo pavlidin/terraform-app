@@ -153,7 +153,7 @@ resource "tls_private_key" "development_ssh" {
 }
 output "tls_private_key" {
   value     = tls_private_key.development_ssh.private_key_pem
-  sensitive = true
+  #sensitive = true
 }
 
 # Create virtual machine
