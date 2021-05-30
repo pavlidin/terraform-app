@@ -6,6 +6,14 @@ terraform {
       version = "~>2.0"
     }
   }
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "pf6-devops-team3"
+
+    workspaces {
+      name = "terraform-app"
+    }
+  }
 }
 provider "azurerm" {
   features {}
@@ -185,13 +193,23 @@ resource "azurerm_linux_virtual_machine" "mydevelopmentvm" {
     environment = "Development Infrastructure"
   }
 
-#   provisioner "remote-exec" {
-#     inline = [
-#       "sudo mkdir Helloworld",
-#       "sudo apt-get install python -y",
-#       "sudo apt-add-repository ppa:ansible/ansible",
-#       "sudo apt-get update",
-#       "sudo apt-get install ansible -y"
-#     ]
-#   }
+  #   provisioner "remote-exec" {
+  #     inline = [
+  #       "sudo mkdir Helloworld",
+  #       "sudo apt-get install python -y",
+  #       "sudo apt-add-repository ppa:ansible/ansible",
+  #       "sudo apt-get update",
+  #       "sudo apt-get install ansible -y"
+  #     ]
+  #   }
+}
+
+data "azurerm_public_ip" "dev" {
+  name                = azurerm_public_ip.mydevelopmentpublicip.name
+  resource_group_name = azurerm_linux_virtual_machine.mydevelopmentvm.resource_group_name
+  depends_on          = [azurerm_linux_virtual_machine.mydevelopmentvm]
+}
+
+output "public_ip_address" {
+  value = data.azurerm_public_ip.dev.ip_address
 }
