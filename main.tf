@@ -74,6 +74,17 @@ resource "azurerm_network_security_group" "mydevelopmentnsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    name                       = "HTTP"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 
   tags = {
     environment = "Development Infrastructure"
@@ -174,16 +185,13 @@ resource "azurerm_linux_virtual_machine" "mydevelopmentvm" {
     environment = "Development Infrastructure"
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "sudo mkdir Helloworld",
-      "sudo apt-get install python -y",
-      "sudo apt-add-repository ppa:ansible/ansible",
-      "sudo apt-get update",
-      "sudo apt-get install ansible -y"
-    ]
-  }
+#   provisioner "remote-exec" {
+#     inline = [
+#       "sudo mkdir Helloworld",
+#       "sudo apt-get install python -y",
+#       "sudo apt-add-repository ppa:ansible/ansible",
+#       "sudo apt-get update",
+#       "sudo apt-get install ansible -y"
+#     ]
+#   }
 }
-
-
-#Comment
