@@ -114,7 +114,7 @@ resource "azurerm_network_interface" "appnic" {
 
 resource "azurerm_network_interface_security_group_association" "appsga" {
   count = length(azurerm_network_interface.appnic)
-  network_interface_id      = "${azurerm_network_interface.appnic[count.index]}"
+  network_interface_id      = "${azurerm_network_interface.appnic[count.index].id}"
   network_security_group_id = azurerm_network_security_group.appnsg.id
 }
 
