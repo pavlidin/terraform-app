@@ -49,6 +49,7 @@ resource "azurerm_subnet" "appsubnet" {
 }
 
 resource "azurerm_public_ip" "apppublicip" {
+  count = var.count
   name                = "${var.prefix}-PublicIP"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
@@ -93,6 +94,7 @@ resource "azurerm_network_security_group" "appnsg" {
 }
 
 resource "azurerm_network_interface" "appnic" {
+  count = var.count
   name                = "${var.prefix}-NIC"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
@@ -131,4 +133,51 @@ resource "azurerm_storage_account" "appstorageaccount" {
   tags = {
     environment = var.environment
   }
+}
+
+# VMs
+resource "azurerm_linux_virtual_machine" "appvm" {
+  count = var.count
+  name                  = "${var.prefix}-VM"
+  location              = var.location
+  resource_group_name   = azurerm_resource_group.java_app.name
+  network_interface_ids = [azurerm_network_interface.appnic.id]
+  size                  = "Standard_DS1_v2"
+
+  os_disk {
+    name                 = "${var.prefix}-Disk"
+    caching              = "ReadWrite"
+    storage_account_type = "Premium_LRS"
+  }
+
+  source_image_reference {
+    publisher = "OpenLogic"
+    offer     = "CentOS"
+    sku       = "7.5"
+    version   = "latest"
+  }
+
+  computer_name                   = "${var.prefix}-VM"
+  admin_username                  = "azureuser"
+  disable_password_authentication = true
+
+  admin_ssh_key {
+    username   = "azureuser"
+    public_key = var.public_key
+  }
+
+  boot_diagnostics {
+    storage_account_uri = azurerm_storage_account.appstorageaccount.primary_blob_endpoint
+  }
+
+  tags = {
+    environment = var.environment
+  }
+}
+
+resource "azurerm_ssh_public_key" "javaAppSSHKey" {
+  name                = "javaAppSSHKey"
+  resource_group_name = azurerm_resource_group.java_app.name
+  location            = var.location
+  public_key          = var.public_key
 }

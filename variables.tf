@@ -29,3 +29,11 @@ variable prefix {
 variable environment {
     type = string
 }
+
+variable count {
+    type = number
+}
+
+variable public_key {
+    type = string
+}
