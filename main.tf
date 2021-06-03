@@ -10,7 +10,15 @@ terraform {
     organization = "pf6-devops-team3"
 
     workspaces {
-      name = "terraform-app"
+      name = "terraform-app-dev"
+    }
+  }
+  backend "remote" {
+    hostname     = "app.terraform.io"
+    organization = "pf6-devops-team3"
+
+    workspaces {
+      name = "terraform-app-prod"
     }
   }
 }
@@ -22,12 +30,11 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-module "development" {
-  source = "./modules/development"
+resource "azurerm_resource_group" "app" {
+  name     = var.resource_group
   location = var.location
-}
 
-# module "production" {
-#   source = "./modules/production"
-#   location = var.location
-# }
+  tags = {
+    environment = var.environment
+  }
+}
