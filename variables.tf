@@ -22,6 +22,10 @@ variable resource_group {
     type = string
 }
 
+variable prefix {
+    type = string
+}
+
 variable environment {
     type = string
 }
