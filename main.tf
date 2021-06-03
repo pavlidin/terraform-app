@@ -8,9 +8,8 @@ terraform {
   backend "remote" {
     hostname     = "app.terraform.io"
     organization = "pf6-devops-team3"
-
     workspaces {
-      prefix = "terraform-app"
+      prefix = "terraform-app-"
     }
   }
 }
@@ -30,3 +29,4 @@ resource "azurerm_resource_group" "app" {
     environment = var.environment
   }
 }
+#test
