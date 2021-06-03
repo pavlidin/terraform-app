@@ -29,4 +29,4 @@ resource "azurerm_resource_group" "app" {
     environment = var.environment
   }
 }
-#test
+# Just a check to see if plan is automatically queued on both workspaces
