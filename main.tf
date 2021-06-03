@@ -21,7 +21,7 @@ provider "azurerm" {
   tenant_id       = var.tenant_id
 }
 
-resource "azurerm_resource_group" "app" {
+resource "azurerm_resource_group" "java_app" {
   name     = var.resource_group
   location = var.location
 
