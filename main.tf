@@ -48,17 +48,17 @@ resource "azurerm_subnet" "appsubnet" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-resource "azurerm_public_ip" "apppublicip" {
-  count = "${var.counter}"
-  name                = "${var.prefix}-PublicIP"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.java_app.name
-  allocation_method   = "Dynamic"
+# resource "azurerm_public_ip" "apppublicip" {
+#   count = "${var.counter}"
+#   name                = "${var.prefix}-PublicIP"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.java_app.name
+#   allocation_method   = "Dynamic"
 
-  tags = {
-    environment = var.environment
-  }
-}
+#   tags = {
+#     environment = var.environment
+#   }
+# }
 
 resource "azurerm_network_security_group" "appnsg" {
   name                = "${var.prefix}-NetworkSecurityGroup"
