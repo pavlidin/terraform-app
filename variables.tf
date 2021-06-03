@@ -30,7 +30,7 @@ variable environment {
     type = string
 }
 
-variable count {
+variable counter {
     type = number
 }
 
