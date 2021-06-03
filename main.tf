@@ -51,7 +51,7 @@ resource "azurerm_subnet" "appsubnet" {
 
 resource "azurerm_public_ip" "apppublicip" {
   count = "${var.counter}"
-  name                = "${var.prefix}-PublicIP-${format("web-%03d", count.index + 1)}"
+  name                = "${var.prefix}-PublicIP-${format("%d", count.index + 1)}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
   allocation_method   = "Dynamic"
@@ -96,12 +96,12 @@ resource "azurerm_network_security_group" "appnsg" {
 
 resource "azurerm_network_interface" "appnic" {
   count = "${var.counter}"
-  name                = "${var.prefix}-NIC-${format("web-%03d", count.index + 1)}"
+  name                = "${var.prefix}-NIC-${format("%d", count.index + 1)}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
 
   ip_configuration {
-    name                          = "${var.prefix}-NicConfiguration-${format("web-%03d", count.index + 1)}"
+    name                          = "${var.prefix}-NicConfiguration-${format("%d", count.index + 1)}"
     subnet_id                     = azurerm_subnet.appsubnet[count.index].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index].id}"
@@ -140,14 +140,14 @@ resource "azurerm_storage_account" "appstorageaccount" {
 # VMs
 resource "azurerm_linux_virtual_machine" "appvm" {
   count = "${var.counter}"
-  name                  = "${var.prefix}-VM-${format("web-%03d", count.index + 1)}"
+  name                  = "${var.prefix}-VM-${format("%d", count.index + 1)}"
   location              = var.location
   resource_group_name   = azurerm_resource_group.java_app.name
   network_interface_ids = ["${azurerm_network_interface.appnic[count.index].id}"]
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "${var.prefix}-Disk-${format("web-%03d", count.index + 1)}"
+    name                 = "${var.prefix}-Disk-${format("%d", count.index + 1)}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -159,7 +159,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
     version   = "latest"
   }
 
-  computer_name                   = "${var.prefix}-VM-${format("web-%03d", count.index + 1)}"
+  computer_name                   = "${var.prefix}-VM-${format("%d", count.index + 1)}"
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
@@ -182,4 +182,11 @@ resource "azurerm_ssh_public_key" "javaAppSSHKey" {
   resource_group_name = azurerm_resource_group.java_app.name
   location            = var.location
   public_key          = var.public_key
+}
+
+data "azurerm_public_ip" "app" {
+  count = var.counter
+  name                = azurerm_public_ip.apppublicip.name
+  resource_group_name = azurerm_linux_virtual_machine.appvm[count.index].resource_group_name
+  depends_on          = [azurerm_linux_virtual_machine.appvm[count.index]]
 }
