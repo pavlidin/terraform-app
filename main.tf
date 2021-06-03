@@ -126,7 +126,7 @@ resource "azurerm_network_interface_security_group_association" "appsga" {
 # }
 
 resource "azurerm_storage_account" "appstorageaccount" {
-  name                     = "${var.prefix}-storage-account"
+  name                     = "${var.prefix}-storage-acc"
   resource_group_name      = azurerm_resource_group.java_app.name
   location                 = var.location
   account_tier             = "Standard"
