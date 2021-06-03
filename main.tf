@@ -10,7 +10,7 @@ terraform {
     organization = "pf6-devops-team3"
 
     workspaces {
-      name = "terraform-cicd"
+      name = "terraform-app"
     }
   }
 }
@@ -24,5 +24,10 @@ provider "azurerm" {
 
 module "development" {
   source = "./modules/development"
+  location = var.location
+}
+
+module "production" {
+  source = "./modules/production"
   location = var.location
 }
