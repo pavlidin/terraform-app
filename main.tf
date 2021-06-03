@@ -40,3 +40,5 @@ resource "azurerm_virtual_network" "appnetwork" {
     environment = var.environment
   }
 }
+
+# Minor refactoring
