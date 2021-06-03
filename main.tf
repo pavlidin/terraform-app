@@ -93,23 +93,23 @@ resource "azurerm_network_security_group" "appnsg" {
   }
 }
 
-resource "azurerm_network_interface" "appnic" {
-  count = "${var.counter}"
-  name                = "${var.prefix}-NIC"
-  location            = var.location
-  resource_group_name = azurerm_resource_group.java_app.name
+# resource "azurerm_network_interface" "appnic" {
+#   count = "${var.counter}"
+#   name                = "${var.prefix}-NIC"
+#   location            = var.location
+#   resource_group_name = azurerm_resource_group.java_app.name
 
-  ip_configuration {
-    name                          = "${var.prefix}-NicConfiguration"
-    subnet_id                     = azurerm_subnet.appsubnet.id
-    private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = ["${azurerm_public_ip.apppublicip[count.index].id}"]
-  }
+#   ip_configuration {
+#     name                          = "${var.prefix}-NicConfiguration"
+#     subnet_id                     = azurerm_subnet.appsubnet.id
+#     private_ip_address_allocation = "Dynamic"
+#     public_ip_address_id          = ["${azurerm_public_ip.apppublicip[count.index].id}"]
+#   }
 
-  tags = {
-    environment = var.environment
-  }
-}
+#   tags = {
+#     environment = var.environment
+#   }
+# }
 
 resource "azurerm_network_interface_security_group_association" "appsga" {
   network_interface_id      = azurerm_network_interface.appnic.id
