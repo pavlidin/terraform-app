@@ -48,17 +48,17 @@ resource "azurerm_subnet" "appsubnet" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-# resource "azurerm_public_ip" "apppublicip" {
-#   count = "${var.counter}"
-#   name                = "${var.prefix}-PublicIP"
-#   location            = var.location
-#   resource_group_name = azurerm_resource_group.java_app.name
-#   allocation_method   = "Dynamic"
+resource "azurerm_public_ip" "apppublicip" {
+  count = "${var.counter}"
+  name                = "${var.prefix}-PublicIP${count.index}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.java_app.name
+  allocation_method   = "Dynamic"
 
-#   tags = {
-#     environment = var.environment
-#   }
-# }
+  tags = {
+    environment = var.environment
+  }
+}
 
 resource "azurerm_network_security_group" "appnsg" {
   name                = "${var.prefix}-NetworkSecurityGroup"
@@ -93,26 +93,27 @@ resource "azurerm_network_security_group" "appnsg" {
   }
 }
 
-# resource "azurerm_network_interface" "appnic" {
-#   count = "${var.counter}"
-#   name                = "${var.prefix}-NIC"
-#   location            = var.location
-#   resource_group_name = azurerm_resource_group.java_app.name
+resource "azurerm_network_interface" "appnic" {
+  count = "${var.counter}"
+  name                = "${var.prefix}-NIC${count.index}"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.java_app.name
 
-#   ip_configuration {
-#     name                          = "${var.prefix}-NicConfiguration"
-#     subnet_id                     = azurerm_subnet.appsubnet.id
-#     private_ip_address_allocation = "Dynamic"
-#     public_ip_address_id          = ["${azurerm_public_ip.apppublicip[count.index].id}"]
-#   }
+  ip_configuration {
+    name                          = "${var.prefix}-NicConfiguration${count.index}"
+    subnet_id                     = azurerm_subnet.appsubnet.id
+    private_ip_address_allocation = "Dynamic"
+    public_ip_address_id          = ["${azurerm_public_ip.apppublicip[count.index].id}"]
+  }
 
-#   tags = {
-#     environment = var.environment
-#   }
-# }
+  tags = {
+    environment = var.environment
+  }
+}
 
 resource "azurerm_network_interface_security_group_association" "appsga" {
-  network_interface_id      = azurerm_network_interface.appnic.id
+  count = length(azurerm_network_interface.appnic)
+  network_interface_id      = "${azurerm_network_interface.appnic[count.index]}"
   network_security_group_id = azurerm_network_security_group.appnsg.id
 }
 
@@ -124,6 +125,7 @@ resource "random_id" "randomId" {
 }
 
 resource "azurerm_storage_account" "appstorageaccount" {
+  count = "${var.counter}"
   name                     = "diag${random_id.randomId.hex}"
   resource_group_name      = azurerm_resource_group.java_app.name
   location                 = var.location
@@ -138,14 +140,14 @@ resource "azurerm_storage_account" "appstorageaccount" {
 # VMs
 resource "azurerm_linux_virtual_machine" "appvm" {
   count = "${var.counter}"
-  name                  = "${var.prefix}-VM"
+  name                  = "${var.prefix}-VM${count.index}"
   location              = var.location
   resource_group_name   = azurerm_resource_group.java_app.name
-  network_interface_ids = [azurerm_network_interface.appnic.id]
+  network_interface_ids = azurerm_network_interface.appnic[count.index]
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "${var.prefix}-Disk"
+    name                 = "${var.prefix}-Disk${count.index}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -157,7 +159,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
     version   = "latest"
   }
 
-  computer_name                   = "${var.prefix}-VM"
+  computer_name                   = "${var.prefix}-VM-${count.index}"
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
