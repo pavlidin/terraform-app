@@ -1,8 +1,8 @@
 resource "azurerm_resource_group" "appdev" {
-  name     = "app-dev2"
+  name     = "app-dev"
   location = var.location
 
   tags = {
-    environment = "App Development Infrastructure"
+    environment = var.environment
   }
 }
