@@ -31,7 +31,7 @@ variable environment {
 }
 
 variable counter {
-    type = number
+    type = string
 }
 
 variable public_key {

@@ -49,7 +49,7 @@ resource "azurerm_subnet" "appsubnet" {
 }
 
 resource "azurerm_public_ip" "apppublicip" {
-  count = var.counter
+  count = "${var.counter}"
   name                = "${var.prefix}-PublicIP"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
@@ -94,7 +94,7 @@ resource "azurerm_network_security_group" "appnsg" {
 }
 
 resource "azurerm_network_interface" "appnic" {
-  count = var.counter
+  count = "${var.counter}"
   name                = "${var.prefix}-NIC"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
@@ -137,7 +137,7 @@ resource "azurerm_storage_account" "appstorageaccount" {
 
 # VMs
 resource "azurerm_linux_virtual_machine" "appvm" {
-  count = var.counter
+  count = "${var.counter}"
   name                  = "${var.prefix}-VM"
   location              = var.location
   resource_group_name   = azurerm_resource_group.java_app.name
