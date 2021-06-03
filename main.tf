@@ -102,7 +102,7 @@ resource "azurerm_network_interface" "appnic" {
 
   ip_configuration {
     name                          = "${var.prefix}-NicConfiguration-${count.index}"
-    subnet_id                     = azurerm_subnet.appsubnet.id
+    subnet_id                     = azurerm_subnet.appsubnet[count.index].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index].id}"
   }
