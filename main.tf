@@ -103,7 +103,7 @@ resource "azurerm_network_interface" "appnic" {
     name                          = "${var.prefix}-NicConfiguration${count.index}"
     subnet_id                     = azurerm_subnet.appsubnet.id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = ["${azurerm_public_ip.apppublicip[count.index].id}"]
+    public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index].id}"
   }
 
   tags = {
