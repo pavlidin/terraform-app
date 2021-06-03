@@ -29,4 +29,14 @@ resource "azurerm_resource_group" "java_app" {
     environment = var.environment
   }
 }
-# Just a check to see if plan is automatically queued on both workspaces!
+
+resource "azurerm_virtual_network" "appnetwork" {
+  name                = "app-Vnet"
+  address_space       = ["10.0.0.0/16"]
+  location            = var.location
+  resource_group_name = azurerm_resource_group.java_app.name
+
+  tags = {
+    environment = var.environment
+  }
+}
