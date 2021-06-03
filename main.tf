@@ -126,7 +126,7 @@ resource "random_id" "randomId" {
 }
 
 resource "azurerm_storage_account" "appstorageaccount" {
-  name                     = "storageacc${random_id.randomId.hex}"
+  name                     = "diag${random_id.randomId.hex}"
   resource_group_name      = azurerm_resource_group.java_app.name
   location                 = var.location
   account_tier             = "Standard"
