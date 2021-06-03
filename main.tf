@@ -42,7 +42,8 @@ resource "azurerm_virtual_network" "appnetwork" {
 }
 
 resource "azurerm_subnet" "appsubnet" {
-  name                 = "${var.prefix}-Subnet"
+  count = "${var.counter}"
+  name                 = "${var.prefix}-Subnet-${count.index}"
   resource_group_name  = azurerm_resource_group.java_app.name
   virtual_network_name = azurerm_virtual_network.appnetwork.name
   address_prefixes     = ["10.0.1.0/24"]
@@ -50,7 +51,7 @@ resource "azurerm_subnet" "appsubnet" {
 
 resource "azurerm_public_ip" "apppublicip" {
   count = "${var.counter}"
-  name                = "${var.prefix}-PublicIP${count.index}"
+  name                = "${var.prefix}-PublicIP-${count.index}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
   allocation_method   = "Dynamic"
@@ -95,12 +96,12 @@ resource "azurerm_network_security_group" "appnsg" {
 
 resource "azurerm_network_interface" "appnic" {
   count = "${var.counter}"
-  name                = "${var.prefix}-NIC${count.index}"
+  name                = "${var.prefix}-NIC-${count.index}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
 
   ip_configuration {
-    name                          = "${var.prefix}-NicConfiguration${count.index}"
+    name                          = "${var.prefix}-NicConfiguration-${count.index}"
     subnet_id                     = azurerm_subnet.appsubnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index].id}"
@@ -139,7 +140,7 @@ resource "azurerm_storage_account" "appstorageaccount" {
 # VMs
 resource "azurerm_linux_virtual_machine" "appvm" {
   count = "${var.counter}"
-  name                  = "${var.prefix}-VM${count.index}"
+  name                  = "${var.prefix}-VM-${count.index}"
   location              = var.location
   resource_group_name   = azurerm_resource_group.java_app.name
   # network_interface_ids = azurerm_network_interface.appnic[count.index]
@@ -147,7 +148,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "${var.prefix}-Disk${count.index}"
+    name                 = "${var.prefix}-Disk-${count.index}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
