@@ -179,7 +179,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
 }
 
 resource "azurerm_ssh_public_key" "javaAppSSHKey" {
-  name                = "javaAppSSHKey"
+  name                = "${var.prefix}-SSHKey"
   resource_group_name = azurerm_resource_group.java_app.name
   location            = var.location
   public_key          = var.public_key
