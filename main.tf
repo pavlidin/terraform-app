@@ -51,7 +51,7 @@ resource "azurerm_subnet" "appsubnet" {
 
 resource "azurerm_public_ip" "apppublicip" {
   count = "${var.counter}"
-  name                = "${var.prefix}-PublicIP-${count.index}"
+  name                = "${var.prefix}-PublicIP-${count.index + 1}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
   allocation_method   = "Dynamic"
@@ -96,15 +96,15 @@ resource "azurerm_network_security_group" "appnsg" {
 
 resource "azurerm_network_interface" "appnic" {
   count = "${var.counter}"
-  name                = "${var.prefix}-NIC-${count.index}"
+  name                = "${var.prefix}-NIC-${count.index + 1}"
   location            = var.location
   resource_group_name = azurerm_resource_group.java_app.name
 
   ip_configuration {
-    name                          = "${var.prefix}-NicConfiguration-${count.index}"
-    subnet_id                     = azurerm_subnet.appsubnet[count.index].id
+    name                          = "${var.prefix}-NicConfiguration-${count.index + 1}"
+    subnet_id                     = azurerm_subnet.appsubnet[count.index + 1].id
     private_ip_address_allocation = "Dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index].id}"
+    public_ip_address_id          = "${azurerm_public_ip.apppublicip[count.index + 1].id}"
   }
 
   tags = {
@@ -114,7 +114,7 @@ resource "azurerm_network_interface" "appnic" {
 
 resource "azurerm_network_interface_security_group_association" "appsga" {
   count = length(azurerm_network_interface.appnic)
-  network_interface_id      = "${azurerm_network_interface.appnic[count.index].id}"
+  network_interface_id      = "${azurerm_network_interface.appnic[count.index + 1].id}"
   network_security_group_id = azurerm_network_security_group.appnsg.id
 }
 
@@ -140,15 +140,15 @@ resource "azurerm_storage_account" "appstorageaccount" {
 # VMs
 resource "azurerm_linux_virtual_machine" "appvm" {
   count = "${var.counter}"
-  name                  = "${var.prefix}-VM-${count.index}"
+  name                  = "${var.prefix}-VM-${count.index + 1}"
   location              = var.location
   resource_group_name   = azurerm_resource_group.java_app.name
-  # network_interface_ids = azurerm_network_interface.appnic[count.index]
-  network_interface_ids = ["${azurerm_network_interface.appnic[count.index].id}"]
+  # network_interface_ids = azurerm_network_interface.appnic[count.index + 1]
+  network_interface_ids = ["${azurerm_network_interface.appnic[count.index + 1].id}"]
   size                  = "Standard_DS1_v2"
 
   os_disk {
-    name                 = "${var.prefix}-Disk-${count.index}"
+    name                 = "${var.prefix}-Disk-${count.index + 1}"
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
   }
@@ -160,7 +160,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
     version   = "latest"
   }
 
-  computer_name                   = "${var.prefix}-VM-${count.index}"
+  computer_name                   = "${var.prefix}-VM-${count.index + 1}"
   admin_username                  = "azureuser"
   disable_password_authentication = true
 
