@@ -189,5 +189,5 @@ data "azurerm_public_ip" "app" {
   name                = azurerm_public_ip.apppublicip.name
   resource_group_name = azurerm_linux_virtual_machine.appvm[count.index].resource_group_name
   # depends_on          = [azurerm_linux_virtual_machine.appvm[count.index]]
-  depends_on          = ["${azurerm_linux_virtual_machine.appvm[count.index]}"]
+  # depends_on          = ["${azurerm_linux_virtual_machine.appvm[count.index]}"]
 }
