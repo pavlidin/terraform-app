@@ -27,7 +27,7 @@ module "development" {
   location = var.location
 }
 
-module "production" {
-  source = "./modules/production"
-  location = var.location
-}
+# module "production" {
+#   source = "./modules/production"
+#   location = var.location
+# }
