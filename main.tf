@@ -153,9 +153,9 @@ resource "azurerm_linux_virtual_machine" "appvm" {
   }
 
   source_image_reference {
-    publisher = "OpenLogic"
-    offer     = "CentOS"
-    sku       = "7.5"
+    publisher = "Canonical"
+    offer     = "UbuntuServer"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 
