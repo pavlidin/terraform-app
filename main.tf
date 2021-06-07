@@ -200,6 +200,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
       "sudo docker network create todoapp",
       "sudo docker volume create sqltodoapp",
       "sudo docker pull mysql:8",
+      "sudo yum install python-docker -y"
 
       # Install Git
       "sudo yum -y install git"
