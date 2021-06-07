@@ -88,6 +88,17 @@ resource "azurerm_network_security_group" "appnsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
+  security_rule {
+    name                       = "8080"
+    priority                   = 1020
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8080"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 
   tags = {
     environment = var.environment
@@ -199,6 +210,7 @@ resource "azurerm_linux_virtual_machine" "appvm" {
       "sudo systemctl enable containerd.service",
       "sudo docker network create todoapp",
       "sudo docker volume create sqltodoapp",
+      "sudo docker pull mysql:8",
 
       # Install Git
       "sudo yum -y install git"
