@@ -153,9 +153,9 @@ resource "azurerm_linux_virtual_machine" "appvm" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "UbuntuServer"
-    sku       = "18.04-LTS"
+    publisher = "OpenLogic"
+    offer     = "CentOS"
+    sku       = "7.5"
     version   = "latest"
   }
 
@@ -174,6 +174,35 @@ resource "azurerm_linux_virtual_machine" "appvm" {
 
   tags = {
     environment = var.environment
+  }
+
+  provisioner "remote-exec" {
+    connection {
+      type = "ssh"
+      user = "azureuser"
+      private_key = var.private_key
+      timeout = "2m"
+      host = self.public_ip_address
+    }
+    inline = [
+      "sudo yum -y check-update",
+      "sudo yum -y update",
+      # Change timezone to Europe/Athens
+      "sudo timedatectl set-timezone Europe/Athens",
+
+      # Install and start Docker
+      "sudo yum install -y yum-utils",
+      "sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo",
+      "sudo yum install -y docker-ce docker-ce-cli containerd.io",
+      "sudo systemctl start docker",
+      "sudo systemctl enable docker.service",
+      "sudo systemctl enable containerd.service",
+      "sudo docker network create todoapp",
+      "sudo docker volume create sqltodoapp",
+
+      # Install Git
+      "sudo yum -y install git"
+    ]
   }
 }
 
