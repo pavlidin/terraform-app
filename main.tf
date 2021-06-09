@@ -197,9 +197,6 @@ resource "azurerm_linux_virtual_machine" "appvm" {
       "sudo systemctl start docker",
       "sudo systemctl enable docker.service",
       "sudo systemctl enable containerd.service",
-      "sudo docker network create todoapp",
-      "sudo docker volume create sqltodoapp",
-      "sudo docker pull mysql:8",
       "sudo yum install python-docker -y",
 
       # Install Git
